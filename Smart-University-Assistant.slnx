@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="Smart-University-Assistant/Smart-University-Assistant.csproj" />
+  <Project Path="Smart-University-Assistant/SmartUniversity.API.csproj" />
+  <Project Path="SmartUniversity.Application/SmartUniversity.Application.csproj" Id="b39b6dc1-41be-483f-a65c-bff9f5af1bb6" />
+  <Project Path="SmartUniversity.Domain/SmartUniversity.Domain.csproj" Id="024a01b2-5b0a-4421-8fdc-fbc4fc7307f7" />
+  <Project Path="SmartUniversity.Infrastructure/SmartUniversity.Infrastructure.csproj" Id="8689563d-dbba-4267-a19f-4846239525ee" />
 </Solution>
