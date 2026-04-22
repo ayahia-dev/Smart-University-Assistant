@@ -5,6 +5,8 @@ using Microsoft.OpenApi;
 using SmartUniversity.Application.DTOs.Auth;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Application.Services;
+using SmartUniversity.Domain.Entities;
+using SmartUniversity.Domain.Interfaces;
 using SmartUniversity.Infrastructure;
 using SmartUniversity.Infrastructure.Persistence;
 using System.Text;
@@ -35,6 +37,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+builder.Services.AddScoped<FacultyService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -50,12 +54,56 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
+builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
+builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 
+builder.Services.AddScoped<IAssignmentSubmissionRepository, AssignmentSubmissionRepository>();
+builder.Services.AddScoped<IAssignmentSubmissionService, AssignmentSubmissionService>();
+
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuizSubmissionRepository, QuizSubmissionRepository>();
+builder.Services.AddScoped<IQuizAnswerRepository, QuizAnswerRepository>();
+
+builder.Services.AddScoped<QuizSubmissionService>();
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (!context.Users.Any(u => u.Email == "admin@smartuni.com"))
+    {
+        var admin = new User(
+            "Admin User",
+            "admin@smartuni.com",
+            "11111111111111",
+            BCrypt.Net.BCrypt.HashPassword("123456"),
+            "Admin",
+            1
+        );
+
+        context.Users.Add(admin);
+        context.SaveChanges();
+    }
+}
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -72,10 +120,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 

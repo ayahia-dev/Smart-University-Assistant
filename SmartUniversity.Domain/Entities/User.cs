@@ -45,5 +45,15 @@ namespace SmartUniversity.Domain.Entities
         {
             Role = "Inactive";
         }
+        public void UpdateInfo(string fullName, int facultyId)
+        {
+            FullName = fullName;
+            FacultyId = facultyId;
+        }
+
+        public void ChangeRole(string role)
+        {
+            Role = role;
+        }
     }
 }

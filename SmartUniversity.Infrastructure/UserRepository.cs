@@ -1,10 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartUniversity.Domain.Entities;
+using SmartUniversity.Domain.Interfaces;
+using SmartUniversity.Infrastructure.Persistence;
 
-namespace SmartUniversity.Infrastructure
+public class UserRepository : IUserRepository
 {
-    internal class UserRepository
+    private readonly ApplicationDbContext _context;
+
+    public UserRepository(ApplicationDbContext context)
     {
+        _context = context;
+    }
+
+    public async Task<List<User>> GetPagedAsync(string? name, string? role, int page, int pageSize)
+    {
+        var query = _context.Users.AsQueryable();
+
+        if (!string.IsNullOrEmpty(name))
+            query = query.Where(x => x.FullName.Contains(name));
+
+        if (!string.IsNullOrEmpty(role))
+            query = query.Where(x => x.Role == role);
+
+        return await query
+            .OrderByDescending(x => x.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public async Task<int> CountAsync(string? name, string? role)
+    {
+        var query = _context.Users.AsQueryable();
+
+        if (!string.IsNullOrEmpty(name))
+            query = query.Where(x => x.FullName.Contains(name));
+
+        if (!string.IsNullOrEmpty(role))
+            query = query.Where(x => x.Role == role);
+
+        return await query.CountAsync();
+    }
+
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        return await _context.Users.FindAsync(id);
+    }
+
+    public async Task AddAsync(User user)
+    {
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> ExistsByEmailAsync(string email)
+    {
+        return await _context.Users.AnyAsync(x => x.Email == email);
+    }
+    public async Task UpdateAsync(User user)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+    }
+    public async Task DeleteAsync(User user)
+    {
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
     }
 }

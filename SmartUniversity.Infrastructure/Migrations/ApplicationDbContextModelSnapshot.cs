@@ -280,6 +280,56 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("SmartUniversity.Domain.Entities.Question", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Grade")
+                        .HasColumnType("float");
+
+                    b.Property<int>("QuizId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuizId");
+
+                    b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("SmartUniversity.Domain.Entities.QuestionOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("QuestionOptions");
+                });
+
             modelBuilder.Entity("SmartUniversity.Domain.Entities.Quiz", b =>
                 {
                     b.Property<int>("Id")
@@ -311,6 +361,28 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.ToTable("Quizzes");
                 });
 
+            modelBuilder.Entity("SmartUniversity.Domain.Entities.QuizAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SelectedOptionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SubmissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuizAnswers");
+                });
+
             modelBuilder.Entity("SmartUniversity.Domain.Entities.QuizSubmission", b =>
                 {
                     b.Property<int>("Id")
@@ -324,6 +396,9 @@ namespace SmartUniversity.Infrastructure.Migrations
 
                     b.Property<double>("Score")
                         .HasColumnType("float");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
@@ -480,6 +555,28 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("SmartUniversity.Domain.Entities.Question", b =>
+                {
+                    b.HasOne("SmartUniversity.Domain.Entities.Quiz", "Quiz")
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Quiz");
+                });
+
+            modelBuilder.Entity("SmartUniversity.Domain.Entities.QuestionOption", b =>
+                {
+                    b.HasOne("SmartUniversity.Domain.Entities.Question", "Question")
+                        .WithMany("Options")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("SmartUniversity.Domain.Entities.Quiz", b =>
                 {
                     b.HasOne("SmartUniversity.Domain.Entities.Course", "Course")
@@ -536,6 +633,11 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.Navigation("Courses");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("SmartUniversity.Domain.Entities.Question", b =>
+                {
+                    b.Navigation("Options");
                 });
 
             modelBuilder.Entity("SmartUniversity.Domain.Entities.User", b =>

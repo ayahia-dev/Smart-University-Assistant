@@ -40,6 +40,27 @@ public class Quiz
         QuizDate = quizDate;
         DurationMinutes = durationMinutes;
     }
+    public DateTime GetEndTime()
+    {
+        return QuizDate.AddMinutes(DurationMinutes);
+    }
+
+    public bool HasStarted(DateTime now)
+    {
+        return now >= QuizDate;
+    }
+
+    public bool IsFinished(DateTime now)
+    {
+        return now > GetEndTime();
+    }
+
+    public TimeSpan GetRemainingTime(DateTime now)
+    {
+        var remaining = GetEndTime() - now;
+
+        return remaining.TotalSeconds > 0 ? remaining : TimeSpan.Zero;
+    }
 }
 
 

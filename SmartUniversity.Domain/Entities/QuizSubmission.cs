@@ -17,17 +17,20 @@ public class QuizSubmission
     public double Score { get; private set; }
 
     public DateTime SubmittedAt { get; private set; }
+    public DateTime StartTime { get; private set; }
 
     private QuizSubmission() { }
 
     public QuizSubmission(int quizId, int studentId, double score)
     {
-        if (score < 0)
-            throw new ArgumentException("Invalid score.");
-
         QuizId = quizId;
         StudentId = studentId;
         Score = score;
         SubmittedAt = DateTime.UtcNow;
+        StartTime = DateTime.UtcNow; 
+    }
+    public void SetScore(double score)
+    {
+        Score = score;
     }
 }
