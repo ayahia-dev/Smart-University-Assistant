@@ -11,6 +11,7 @@ namespace SmartUniversity.Domain.Interfaces
 
         Task<bool> ExistsAsync(int quizId, int studentId);
         Task<QuizSubmission?> GetAsync(int quizId, int studentId);
+        Task<List<double>> GetStudentQuizScores(int studentId);
         Task SaveChangesAsync();
     }
 }

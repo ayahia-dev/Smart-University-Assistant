@@ -1,4 +1,6 @@
-﻿using SmartUniversity.Application.DTOs.User;
+﻿using SmartUniversity.Application.DTOs.pagination;
+using SmartUniversity.Application.DTOs.User;
+using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
 using SmartUniversity.Domain.Interfaces;
@@ -12,8 +14,11 @@ public class UserService : IUserService
         _repo = repo;
     }
 
-    public async Task<object> GetPagedAsync(string? name, string? role, int page, int pageSize)
+    public async Task<PagedResult<UserDto>> GetPagedAsync(string? name, string? role, int page, int pageSize)
     {
+        if (page <= 0) page = 1;
+        if (pageSize <= 0 || pageSize > 50) pageSize = 10;
+
         var users = await _repo.GetPagedAsync(name, role, page, pageSize);
         var total = await _repo.CountAsync(name, role);
 
@@ -26,12 +31,12 @@ public class UserService : IUserService
             FacultyId = x.FacultyId
         });
 
-        return new
+        return new PagedResult<UserDto>
         {
-            total,
-            page,
-            pageSize,
-            data
+            Total = total,
+            Page = page,
+            PageSize = pageSize,
+            Data = data
         };
     }
 
@@ -39,7 +44,8 @@ public class UserService : IUserService
     {
         var user = await _repo.GetByIdAsync(id);
 
-        if (user == null) return null;
+        if (user == null)
+            return null;
 
         return new UserDto
         {
@@ -54,7 +60,7 @@ public class UserService : IUserService
     public async Task CreateAsync(CreateUserDto dto)
     {
         if (await _repo.ExistsByEmailAsync(dto.Email))
-            throw new Exception("Email already exists");
+            throw new BadRequestException("Email already exists");
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
@@ -69,14 +75,14 @@ public class UserService : IUserService
 
         await _repo.AddAsync(user);
     }
+
     public async Task UpdateAsync(int id, UpdateUserDto dto)
     {
         var user = await _repo.GetByIdAsync(id);
 
         if (user == null)
-            throw new Exception("User not found");
+            throw new BadRequestException("User not found");
 
-        
         user.UpdateInfo(dto.FullName, dto.FacultyId);
         user.ChangeRole(dto.Role);
 
@@ -88,7 +94,7 @@ public class UserService : IUserService
         var user = await _repo.GetByIdAsync(id);
 
         if (user == null)
-            throw new Exception("User not found");
+            throw new BadRequestException("User not found");
 
         await _repo.DeleteAsync(user);
     }

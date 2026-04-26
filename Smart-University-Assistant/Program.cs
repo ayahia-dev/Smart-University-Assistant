@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using SmartUniversity.Application.DTOs.Auth;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Application.Services;
@@ -11,34 +10,66 @@ using SmartUniversity.Infrastructure;
 using SmartUniversity.Infrastructure.Persistence;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ================== Services ==================
 
 builder.Services.AddControllers();
-
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// ✅ CORS لازم هنا قبل Build
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
 
-
-
+// DB
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Repositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+builder.Services.AddScoped<IAssignmentSubmissionRepository, AssignmentSubmissionRepository>();
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuizSubmissionRepository, QuizSubmissionRepository>();
+builder.Services.AddScoped<IQuizAnswerRepository, QuizAnswerRepository>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
-builder.Services.AddAuthorization();
+// Services
 builder.Services.AddScoped<IAuthService, AuthService>();
-
 builder.Services.AddScoped<IJwtService, JwtService>();
-
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+builder.Services.AddScoped<IAssignmentSubmissionService, AssignmentSubmissionService>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<QuizSubmissionService>();
 builder.Services.AddScoped<FacultyService>();
+builder.Services.AddScoped<AiIntegrationService>();
+builder.Services.AddScoped<AttendanceService>();
+builder.Services.AddScoped<NewsService>();
+builder.Services.AddScoped<EventService>();
 
+
+builder.Services.AddHttpClient<AiService>();
+
+// Auth
+builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -54,36 +85,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-builder.Services.AddScoped<ICourseService, CourseService>();
-
-builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
-builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
-
-builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
-builder.Services.AddScoped<IAssignmentService, AssignmentService>();
-
-builder.Services.AddScoped<IAssignmentSubmissionRepository, AssignmentSubmissionRepository>();
-builder.Services.AddScoped<IAssignmentSubmissionService, AssignmentSubmissionService>();
-
-builder.Services.AddScoped<IQuizRepository, QuizRepository>();
-builder.Services.AddScoped<IQuizService, QuizService>();
-
-builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
-builder.Services.AddScoped<IQuestionService, QuestionService>();
-
-builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
-builder.Services.AddScoped<IQuizSubmissionRepository, QuizSubmissionRepository>();
-builder.Services.AddScoped<IQuizAnswerRepository, QuizAnswerRepository>();
-
-builder.Services.AddScoped<QuizSubmissionService>();
+// ================== Build ==================
 
 var app = builder.Build();
 
-
+// Seed admin
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -104,6 +111,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// ================== Middleware ==================
 
 if (app.Environment.IsDevelopment())
 {
@@ -111,21 +119,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
+
 app.UseMiddleware<ExceptionMiddleware>();
+
+// ✅ CORS هنا (بعد Build وقبل Auth)
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 

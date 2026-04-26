@@ -5,10 +5,12 @@ using SmartUniversity.Application.Exceptions;
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -19,19 +21,31 @@ public class ExceptionMiddleware
         }
         catch (BadRequestException ex)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await context.Response.WriteAsync(JsonSerializer.Serialize(new
-            {
-                error = ex.Message
-            }));
+            _logger.LogWarning(ex, "Bad Request Exception");
+
+            await HandleExceptionAsync(context, HttpStatusCode.BadRequest, ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsync(JsonSerializer.Serialize(new
-            {
-                error = "Internal Server Error"
-            }));
+            _logger.LogError(ex, "Unhandled Exception");
+
+            await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, "Internal Server Error");
         }
+    }
+
+    private static async Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode, string message)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int)statusCode;
+
+        var response = new
+        {
+            success = false,
+            error = message
+        };
+
+        var json = JsonSerializer.Serialize(response);
+
+        await context.Response.WriteAsync(json);
     }
 }

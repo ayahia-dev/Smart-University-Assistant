@@ -12,6 +12,7 @@ namespace SmartUniversity.Domain.Interfaces
         Task<bool> ExistsAsync(int studentId, int courseId);
 
         Task<List<Enrollment>> GetByStudentIdAsync(int studentId);
+        Task<List<User>> GetStudentsByCourseIdAsync(int courseId);
     }
 }
 
