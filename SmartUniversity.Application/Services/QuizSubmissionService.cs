@@ -33,10 +33,10 @@ public class QuizSubmissionService
 
         var submission = await _repo.GetAsync(dto.QuizId, studentId);
 
-        if (submission == null)
-            throw new Exception("You must start the quiz first");
+        if (submission.StartTime == null)
+            throw new Exception("Quiz not started");
 
-        var elapsedMinutes = (now - submission.StartTime).TotalMinutes;
+        var elapsedMinutes = (now - submission.StartTime.Value).TotalMinutes;
 
         if (elapsedMinutes > quiz.DurationMinutes)
             throw new Exception("Time is over");
@@ -151,12 +151,14 @@ public class QuizSubmissionService
 
         var existing = await _repo.GetAsync(quizId, studentId);
 
-        if (existing != null)
-        {
-            var remaining = quiz.DurationMinutes * 60 -
-                (int)(DateTime.UtcNow - existing.StartTime).TotalSeconds;
+        if (existing.StartTime == null)
+        { 
+            throw new Exception("Quiz not started");
 
-            return new
+        var remaining = quiz.DurationMinutes * 60 -
+            (int)(DateTime.UtcNow - existing.StartTime.Value).TotalSeconds;
+
+        return new
             {
                 started = true,
                 remainingSeconds = remaining > 0 ? remaining : 0

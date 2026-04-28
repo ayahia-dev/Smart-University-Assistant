@@ -11,5 +11,6 @@ namespace SmartUniversity.Application.Interfaces
         Task<IEnumerable<QuizDto>> GetByCourseAsync(int courseId);
         Task UpdateAsync(int id, UpdateQuizDto dto);
         Task DeleteAsync(int id);
+        Task StartQuizAsync(int quizId, int studentId);
     }
 }

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartUniversity.Application.DTOs.Quiz;
 using SmartUniversity.Application.Interfaces;
+using SmartUniversity.Application.Services;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/quizzes")]
@@ -14,7 +16,6 @@ public class QuizController : ControllerBase
         _service = service;
     }
 
-    // 🟢 Create
     [HttpPost]
     [Authorize(Roles = "Doctor")]
     public async Task<IActionResult> Create(CreateQuizDto dto)
@@ -23,7 +24,6 @@ public class QuizController : ControllerBase
         return Ok();
     }
 
-    // 🟢 Get By Course
     [HttpGet("/api/courses/{courseId}/quizzes")]
     public async Task<IActionResult> GetByCourse(int courseId)
     {
@@ -31,7 +31,6 @@ public class QuizController : ControllerBase
         return Ok(quizzes);
     }
 
-    // 🟡 Update
     [HttpPut("{id}")]
     [Authorize(Roles = "Doctor")]
     public async Task<IActionResult> Update(int id, UpdateQuizDto dto)
@@ -40,12 +39,23 @@ public class QuizController : ControllerBase
         return Ok();
     }
 
-    // 🔴 Delete
+
     [HttpDelete("{id}")]
     [Authorize(Roles = "Doctor")]
     public async Task<IActionResult> Delete(int id)
     {
         await _service.DeleteAsync(id);
         return Ok();
+    }
+
+    [HttpPost("{quizId}/start")]
+    [Authorize(Roles = "Student")]
+    public async Task<IActionResult> StartQuiz(int quizId)
+    {
+        var studentId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        await _service.StartQuizAsync(quizId, studentId);
+
+        return Ok("Quiz started");
     }
 }

@@ -76,5 +76,17 @@ namespace SmartUniversity.Application.Services
             _genericRepo.Delete(quiz);
             await _genericRepo.SaveChangesAsync();
         }
+        public async Task StartQuizAsync(int quizId, int studentId)
+        {
+            if (await _submissionRepo.ExistsAsync(quizId, studentId))
+                throw new BadRequestException("Quiz already started");
+
+            var submission = new QuizSubmission(quizId, studentId, 0);
+
+            submission.Start();
+
+            await _submissionRepo.AddAsync(submission);
+            await _submissionRepo.SaveChangesAsync();
+        }
     }
 }
