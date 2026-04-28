@@ -16,7 +16,8 @@ public class Quiz
 
     public DateTime QuizDate { get; private set; }
     public int DurationMinutes { get; private set; }
-
+    public ICollection<Question> Questions { get; private set; }
+    = new List<Question>();
     private Quiz() { }
 
     public Quiz(int courseId, string title, double totalGrade, DateTime quizDate, int durationMinutes)
@@ -61,6 +62,7 @@ public class Quiz
 
         return remaining.TotalSeconds > 0 ? remaining : TimeSpan.Zero;
     }
+
 }
 
 

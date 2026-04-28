@@ -14,6 +14,8 @@ namespace SmartUniversity.Domain.Entities
 
         public int SelectedOptionId { get; private set; }
 
+        public QuizSubmission Submission { get; private set; }
+
         private QuizAnswer() { }
 
         public QuizAnswer(int submissionId, int questionId, int selectedOptionId)

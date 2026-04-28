@@ -39,4 +39,9 @@ public class QuizSubmissionRepository : IQuizSubmissionRepository
             .Select(x => x.Score)
             .ToListAsync();
     }
+    public async Task<bool> HasSubmissionsAsync(int quizId)
+    {
+        return await _context.QuizSubmissions
+            .AnyAsync(x => x.QuizId == quizId);
+    }
 }

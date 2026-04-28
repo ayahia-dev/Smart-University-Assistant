@@ -47,6 +47,7 @@ builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IQuizSubmissionRepository, QuizSubmissionRepository>();
 builder.Services.AddScoped<IQuizAnswerRepository, QuizAnswerRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -64,6 +65,8 @@ builder.Services.AddScoped<AiIntegrationService>();
 builder.Services.AddScoped<AttendanceService>();
 builder.Services.AddScoped<NewsService>();
 builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<LectureService>();
+builder.Services.AddScoped<StudentGradeService>();
 
 
 builder.Services.AddHttpClient<AiService>();

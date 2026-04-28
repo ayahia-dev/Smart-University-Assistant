@@ -1,20 +1,25 @@
 ﻿using SmartUniversity.Application.DTOs.Quiz;
+using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
 using SmartUniversity.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SmartUniversity.Application.Services
 {
     public class QuizService : IQuizService
     {
         private readonly IQuizRepository _repo;
+        private readonly IGenericRepository<Quiz> _genericRepo;
+        private readonly IQuizSubmissionRepository _submissionRepo; 
 
-        public QuizService(IQuizRepository repo)
+        public QuizService(
+            IQuizRepository repo,
+            IGenericRepository<Quiz> genericRepo,
+            IQuizSubmissionRepository submissionRepo) 
         {
             _repo = repo;
+            _genericRepo = genericRepo;
+            _submissionRepo = submissionRepo; 
         }
 
         public async Task CreateAsync(CreateQuizDto dto)
@@ -27,7 +32,8 @@ namespace SmartUniversity.Application.Services
                 dto.DurationMinutes
             );
 
-            await _repo.AddAsync(quiz);
+            await _genericRepo.AddAsync(quiz);
+            await _genericRepo.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<QuizDto>> GetByCourseAsync(int courseId)
@@ -42,6 +48,33 @@ namespace SmartUniversity.Application.Services
                 QuizDate = x.QuizDate,
                 DurationMinutes = x.DurationMinutes
             });
+        }
+
+        public async Task UpdateAsync(int id, UpdateQuizDto dto)
+        {
+            var quiz = await _genericRepo.GetByIdAsync(id);
+
+            if (quiz == null)
+                throw new BadRequestException("Quiz not found");
+
+            quiz.UpdateDetails(dto.Title, dto.QuizDate, dto.DurationMinutes);
+
+            _genericRepo.Update(quiz);
+            await _genericRepo.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var quiz = await _genericRepo.GetByIdAsync(id);
+
+            if (quiz == null)
+                throw new BadRequestException("Quiz not found");
+
+            if (await _submissionRepo.HasSubmissionsAsync(id))
+                throw new BadRequestException("Cannot delete quiz with submissions");
+
+            _genericRepo.Delete(quiz);
+            await _genericRepo.SaveChangesAsync();
         }
     }
 }

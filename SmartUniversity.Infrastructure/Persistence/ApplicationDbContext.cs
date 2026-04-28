@@ -30,6 +30,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<QuizAnswer> QuizAnswers { get; set; }
     public DbSet<News> News { get; set; }
     public DbSet<Event> Events { get; set; }
+    public DbSet<Lecture> Lectures { get; set; }
+    public DbSet<StudentGrade> StudentGrades { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -58,6 +60,30 @@ public class ApplicationDbContext : DbContext
             modelBuilder.Entity<Faculty>()
                 .HasIndex(f => f.Name)
                 .IsUnique();
+
+            modelBuilder.Entity<Question>()
+            .HasOne(q => q.Quiz)
+            .WithMany(q => q.Questions)
+            .HasForeignKey(q => q.QuizId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<QuestionOption>()
+            .HasOne(o => o.Question)
+            .WithMany(q => q.Options)
+            .HasForeignKey(o => o.QuestionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<QuizAnswer>()
+            .HasOne(a => a.Submission)
+            .WithMany(s => s.Answers)
+            .HasForeignKey(a => a.SubmissionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<QuizSubmission>()
+                .HasOne(s => s.Quiz)
+                .WithMany()
+                .HasForeignKey(s => s.QuizId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

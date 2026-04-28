@@ -15,9 +15,11 @@ public class QuizSubmission
     public User Student { get; private set; }
 
     public double Score { get; private set; }
-
+    public ICollection<QuizAnswer> Answers { get; private set; }
+    = new List<QuizAnswer>();
     public DateTime SubmittedAt { get; private set; }
     public DateTime StartTime { get; private set; }
+
 
     private QuizSubmission() { }
 

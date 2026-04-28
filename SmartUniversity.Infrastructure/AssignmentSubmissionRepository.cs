@@ -55,5 +55,10 @@ namespace SmartUniversity.Infrastructure
                 .Select(x => x.Grade ?? 0)
                 .ToListAsync();
         }
+        public async Task<bool> HasSubmissionsAsync(int assignmentId)
+        {
+            return await _context.AssignmentSubmissions
+                .AnyAsync(x => x.AssignmentId == assignmentId);
+        }
     }
 }

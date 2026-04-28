@@ -1,4 +1,5 @@
 ﻿using SmartUniversity.Application.DTOs.Assignment;
+using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
 using SmartUniversity.Domain.Interfaces;
@@ -20,7 +21,7 @@ namespace SmartUniversity.Application.Services
         public async Task SubmitAsync(int studentId, SubmitDto dto)
         {
             if (await _repo.ExistsAsync(dto.AssignmentId, studentId))
-                throw new Exception("Already submitted");
+                throw new BadRequestException("You already submitted this assignment");
 
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.File.FileName);
 
@@ -64,12 +65,13 @@ namespace SmartUniversity.Application.Services
             var submission = await _repo.GetByIdAsync(submissionId);
 
             if (submission == null)
-                throw new Exception("Submission not found");
+                throw new BadRequestException("Submission not found");
 
             submission.GradeSubmission(dto.Grade, dto.Feedback);
 
             await _repo.UpdateAsync(submission);
         }
         
+
     }
 }

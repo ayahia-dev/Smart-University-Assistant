@@ -17,5 +17,6 @@ namespace SmartUniversity.Domain.Interfaces
 
         Task UpdateAsync(AssignmentSubmission submission);
         Task<List<double>> GetStudentAssignmentScores(int studentId);
+        Task<bool> HasSubmissionsAsync(int assignmentId);
     }
 }
