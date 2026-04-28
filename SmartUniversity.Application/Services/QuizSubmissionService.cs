@@ -7,34 +7,32 @@ public class QuizSubmissionService
     private readonly IQuestionRepository _questionRepo;
     private readonly IQuizSubmissionRepository _repo;
     private readonly IQuizAnswerRepository _answerRepo;
-    private readonly IQuizRepository _quizRepo; 
+    private readonly IQuizRepository _quizRepo;
 
     public QuizSubmissionService(
         IQuestionRepository questionRepo,
         IQuizSubmissionRepository repo,
         IQuizAnswerRepository answerRepo,
-        IQuizRepository quizRepo 
+        IQuizRepository quizRepo
     )
     {
         _questionRepo = questionRepo;
         _repo = repo;
         _answerRepo = answerRepo;
-        _quizRepo = quizRepo; 
+        _quizRepo = quizRepo;
     }
 
     public async Task<double> SubmitAsync(int studentId, SubmitQuizDto dto)
     {
         var quiz = await _quizRepo.GetByIdAsync(dto.QuizId);
-
         if (quiz == null)
             throw new Exception("Quiz not found");
 
-        var now = DateTime.UtcNow;
-
         var submission = await _repo.GetAsync(dto.QuizId, studentId);
+        if (submission == null || submission.StartTime == null)
+            throw new Exception("You must start the quiz first");
 
-        if (submission.StartTime == null)
-            throw new Exception("Quiz not started");
+        var now = DateTime.UtcNow;
 
         var elapsedMinutes = (now - submission.StartTime.Value).TotalMinutes;
 
@@ -44,11 +42,9 @@ public class QuizSubmissionService
         if (submission.Score > 0)
             throw new Exception("Quiz already submitted");
 
-        var questions = await _questionRepo
-            .GetByQuizWithOptionsAsync(dto.QuizId);
+        var questions = await _questionRepo.GetByQuizWithOptionsAsync(dto.QuizId);
 
         double totalScore = 0;
-
         var answersList = new List<QuizAnswer>();
 
         foreach (var q in questions)
@@ -76,9 +72,8 @@ public class QuizSubmissionService
 
         submission.SetScore(totalScore);
 
-        await _repo.SaveChangesAsync();
-
         await _answerRepo.AddRangeAsync(answersList);
+        await _repo.SaveChangesAsync();
 
         return totalScore;
     }
@@ -90,11 +85,8 @@ public class QuizSubmissionService
         if (submission == null)
             throw new Exception("No submission found");
 
-        var questions = await _questionRepo
-            .GetByQuizWithOptionsAsync(quizId);
-
-        var answers = await _answerRepo
-            .GetBySubmissionIdAsync(submission.Id);
+        var questions = await _questionRepo.GetByQuizWithOptionsAsync(quizId);
+        var answers = await _answerRepo.GetBySubmissionIdAsync(submission.Id);
 
         var result = new QuizResultDto
         {
@@ -142,6 +134,7 @@ public class QuizSubmissionService
             remainingSeconds = (int)quiz.GetRemainingTime(now).TotalSeconds
         };
     }
+
     public async Task<object> StartQuizAsync(int studentId, int quizId)
     {
         var quiz = await _quizRepo.GetByIdAsync(quizId);
@@ -151,14 +144,15 @@ public class QuizSubmissionService
 
         var existing = await _repo.GetAsync(quizId, studentId);
 
-        if (existing.StartTime == null)
-        { 
-            throw new Exception("Quiz not started");
+        if (existing != null)
+        {
+            if (existing.StartTime == null)
+                throw new Exception("Invalid state");
 
-        var remaining = quiz.DurationMinutes * 60 -
-            (int)(DateTime.UtcNow - existing.StartTime.Value).TotalSeconds;
+            var remaining = quiz.DurationMinutes * 60 -
+                (int)(DateTime.UtcNow - existing.StartTime.Value).TotalSeconds;
 
-        return new
+            return new
             {
                 started = true,
                 remainingSeconds = remaining > 0 ? remaining : 0
@@ -166,8 +160,10 @@ public class QuizSubmissionService
         }
 
         var submission = new QuizSubmission(quizId, studentId, 0);
+        submission.Start();
 
         await _repo.AddAsync(submission);
+        await _repo.SaveChangesAsync();
 
         return new
         {
