@@ -24,11 +24,11 @@ public class QuizController : ControllerBase
     }
 
     // 🟢 Get By Course
-    [HttpGet("{courseId}")]
+    [HttpGet("/api/courses/{courseId}/quizzes")]
     public async Task<IActionResult> GetByCourse(int courseId)
     {
-        var result = await _service.GetByCourseAsync(courseId);
-        return Ok(result);
+        var quizzes = await _service.GetByCourseAsync(courseId);
+        return Ok(quizzes);
     }
 
     // 🟡 Update
