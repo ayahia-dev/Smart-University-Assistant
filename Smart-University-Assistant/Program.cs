@@ -98,6 +98,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+    // 🟦 Admin
     if (!context.Users.Any(u => u.Email == "admin@smartuni.com"))
     {
         var admin = new User(
@@ -113,6 +114,71 @@ using (var scope = app.Services.CreateScope())
         context.SaveChanges();
     }
 }
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+//    // ❗ منع التكرار لو شغلت الكود تاني
+//    if (context.Users.Any(u => u.Email.StartsWith("student") || u.Email.StartsWith("doctor")))
+//        return;
+
+//    var users = new List<User>();
+
+//    var names = new[]
+//    {
+//        "Ahmed Yahiya", "Mohamed Hassan", "Ali Mahmoud", "Omar Khaled",
+//        "Youssef Ahmed", "Hassan Ali", "Mahmoud Samy", "Mostafa Adel",
+//        "Karim Nabil", "Tarek Ibrahim",
+//        "Sara Mohamed", "Mona Ahmed", "Nour Ali", "Aya Hassan",
+//        "Fatma Mahmoud", "Huda Ibrahim", "Salma Khaled", "Dina Samy",
+//        "Yara Mostafa", "Menna Nabil"
+//    };
+
+//    int facultyCount = 6;
+
+//    // 🟩 Students (40)
+//    for (int i = 0; i < 40; i++)
+//    {
+//        var name = names[i % names.Length];
+//        var email = $"student{i}@uni.com";
+//        var nationalId = (10000000000000 + i).ToString(); // 🔥 unique
+
+//        var user = new User(
+//            name,
+//            email,
+//            nationalId,
+//            BCrypt.Net.BCrypt.HashPassword("123456"),
+//            "Student",
+//            (i % facultyCount) + 1
+//        );
+
+//        users.Add(user);
+//    }
+
+//    // 🟦 Doctors (10)
+//    for (int i = 0; i < 10; i++)
+//    {
+//        var name = "Dr. " + names[i % names.Length];
+//        var email = $"doctor{i}@uni.com"; // ✔ صح
+//        var nationalId = (20000000000000 + i).ToString(); // 🔥 range مختلف
+
+//        var user = new User(
+//            name,
+//            email,
+//            nationalId,
+//            BCrypt.Net.BCrypt.HashPassword("123456"),
+//            "Doctor",
+//            (i % facultyCount) + 1
+//        );
+
+//        users.Add(user);
+//    }
+
+//    context.Users.AddRange(users);
+//    context.SaveChanges();
+//}
+
 
 // ================== Middleware ==================
 

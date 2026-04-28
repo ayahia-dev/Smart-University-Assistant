@@ -29,7 +29,7 @@ public class QuestionRepository : IQuestionRepository
     public async Task<List<Question>> GetByQuizWithOptionsAsync(int quizId)
     {
         return await _context.Questions
-            .Include(q => q.Options)
+            .Include(q => q.Options) 
             .Where(q => q.QuizId == quizId)
             .ToListAsync();
     }

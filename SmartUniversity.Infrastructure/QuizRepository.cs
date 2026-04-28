@@ -21,11 +21,18 @@ public class QuizRepository : IQuizRepository
     public async Task<List<Quiz>> GetByCourseIdAsync(int courseId)
     {
         return await _context.Quizzes
-            .Where(x => x.CourseId == courseId)
+            .Where(q => q.CourseId == courseId)
             .ToListAsync();
     }
     public async Task<Quiz?> GetByIdAsync(int id)
     {
         return await _context.Quizzes.FindAsync(id);
+    }
+    public async Task<List<Question>> GetByQuizWithOptionsAsync(int quizId)
+    {
+        return await _context.Questions
+            .Include(q => q.Options) 
+            .Where(q => q.QuizId == quizId)
+            .ToListAsync();
     }
 }

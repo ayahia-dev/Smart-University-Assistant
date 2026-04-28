@@ -42,7 +42,7 @@ namespace SmartUniversity.Application.Services
 
         public async Task<IEnumerable<QuestionDto>> GetByQuizAsync(int quizId)
         {
-            var questions = await _repo.GetByQuizIdAsync(quizId);
+            var questions = await _repo.GetByQuizWithOptionsAsync(quizId);
 
             return questions.Select(q => new QuestionDto
             {
