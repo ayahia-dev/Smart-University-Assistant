@@ -46,11 +46,14 @@ namespace SmartUniversity.Application.Services
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             //4 ️ check faculty
-            var facultyExists = await _facultyRepository
-             .AnyAsync(f => f.Id == dto.FacultyId);
+            if (dto.Role == "Student")
+            {
+                var facultyExists = await _facultyRepository
+                    .AnyAsync(f => f.Id == dto.FacultyId);
 
-            if (!facultyExists)
-                throw new BadRequestException("Invalid faculty selected.");
+                if (!facultyExists)
+                    throw new BadRequestException("Invalid faculty selected.");
+            }
 
             //5️ check role
             var allowedRoles = new[] { "Student", "Doctor" };

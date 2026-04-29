@@ -31,7 +31,9 @@ public class UserRepository : IUserRepository
 
     public async Task<int> CountAsync(string? name, string? role)
     {
-        var query = _context.Users.AsQueryable();
+        var query = _context.Users
+        .Include(x => x.Faculty) 
+        .AsQueryable();
 
         if (!string.IsNullOrEmpty(name))
             query = query.Where(x => x.FullName.Contains(name));

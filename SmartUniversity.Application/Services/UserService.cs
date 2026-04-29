@@ -53,7 +53,9 @@ public class UserService : IUserService
             FullName = user.FullName,
             Email = user.Email,
             Role = user.Role,
-            FacultyId = user.FacultyId
+            FacultyId = user.FacultyId,
+            NationalId = user.NationalId,
+            FacultyName = user.Faculty.Name
         };
     }
 

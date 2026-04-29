@@ -11,5 +11,7 @@ namespace SmartUniversity.Application.DTOs.User
         public string Email { get; set; }
         public string Role { get; set; }
         public int FacultyId { get; set; }
+        public string NationalId { get; set; }
+        public string FacultyName { get; set; }
     }
 }
