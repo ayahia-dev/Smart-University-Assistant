@@ -18,14 +18,10 @@ namespace SmartUniversity.Domain.Entities
 
         private StudentGrade() { }
 
-        public StudentGrade(int studentId, int courseId,
-            double mid, double final)
+        public StudentGrade(int studentId, int courseId)
         {
             StudentId = studentId;
             CourseId = courseId;
-            MidtermGrade = mid;
-            FinalGrade = final;
-            IsPublished = false;
         }
 
         public void Update(double mid, double final)
@@ -37,6 +33,25 @@ namespace SmartUniversity.Domain.Entities
         public void Publish()
         {
             IsPublished = true;
+        }
+        public double GetTotalGrade()
+        {
+            return MidtermGrade + FinalGrade;
+        }
+        public void SetMidterm(double mid)
+        {
+            if (mid < 0)
+                throw new Exception("Invalid midterm");
+
+            MidtermGrade = mid;
+        }
+
+        public void SetFinal(double final)
+        {
+            if (final < 0)
+                throw new Exception("Invalid final");
+
+            FinalGrade = final;
         }
     }
 }

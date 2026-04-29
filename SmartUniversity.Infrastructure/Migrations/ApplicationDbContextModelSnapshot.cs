@@ -22,6 +22,38 @@ namespace SmartUniversity.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("QuizSubmission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("QuizId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuizId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("QuizSubmissions");
+                });
+
             modelBuilder.Entity("SmartUniversity.Domain.Entities.Assignment", b =>
                 {
                     b.Property<int>("Id")
@@ -158,6 +190,12 @@ namespace SmartUniversity.Infrastructure.Migrations
 
                     b.Property<int>("FacultyId")
                         .HasColumnType("int");
+
+                    b.Property<double>("MaxFinal")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MaxMidterm")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -476,38 +514,6 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.ToTable("QuizAnswers");
                 });
 
-            modelBuilder.Entity("SmartUniversity.Domain.Entities.QuizSubmission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("QuizId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SubmittedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuizId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("QuizSubmissions");
-                });
-
             modelBuilder.Entity("SmartUniversity.Domain.Entities.StudentGrade", b =>
                 {
                     b.Property<int>("Id")
@@ -576,6 +582,25 @@ namespace SmartUniversity.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("QuizSubmission", b =>
+                {
+                    b.HasOne("SmartUniversity.Domain.Entities.Quiz", "Quiz")
+                        .WithMany()
+                        .HasForeignKey("QuizId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SmartUniversity.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Quiz");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SmartUniversity.Domain.Entities.Assignment", b =>
@@ -722,32 +747,13 @@ namespace SmartUniversity.Infrastructure.Migrations
 
             modelBuilder.Entity("SmartUniversity.Domain.Entities.QuizAnswer", b =>
                 {
-                    b.HasOne("SmartUniversity.Domain.Entities.QuizSubmission", "Submission")
+                    b.HasOne("QuizSubmission", "Submission")
                         .WithMany("Answers")
                         .HasForeignKey("SubmissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Submission");
-                });
-
-            modelBuilder.Entity("SmartUniversity.Domain.Entities.QuizSubmission", b =>
-                {
-                    b.HasOne("SmartUniversity.Domain.Entities.Quiz", "Quiz")
-                        .WithMany()
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SmartUniversity.Domain.Entities.User", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Quiz");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SmartUniversity.Domain.Entities.User", b =>
@@ -759,6 +765,11 @@ namespace SmartUniversity.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("QuizSubmission", b =>
+                {
+                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("SmartUniversity.Domain.Entities.AttendanceSession", b =>
@@ -786,11 +797,6 @@ namespace SmartUniversity.Infrastructure.Migrations
             modelBuilder.Entity("SmartUniversity.Domain.Entities.Quiz", b =>
                 {
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("SmartUniversity.Domain.Entities.QuizSubmission", b =>
-                {
-                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("SmartUniversity.Domain.Entities.User", b =>

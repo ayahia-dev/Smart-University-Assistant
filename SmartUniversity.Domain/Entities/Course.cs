@@ -17,6 +17,8 @@ namespace SmartUniversity.Domain.Entities
 
         public int DoctorId { get; private set; }
         public User Doctor { get; private set; }
+        public double MaxMidterm { get; private set; }
+        public double MaxFinal { get; private set; }
 
         public ICollection<Enrollment> Enrollments { get; private set; }
             = new List<Enrollment>();
@@ -42,5 +44,14 @@ namespace SmartUniversity.Domain.Entities
             Name = name;
             Description = description;
         }
+        public void SetGradingScheme(double maxMid, double maxFinal)
+        {
+            if (maxMid <= 0 || maxFinal <= 0)
+                throw new Exception("Invalid max grades");
+
+            MaxMidterm = maxMid;
+            MaxFinal = maxFinal;
+        }
+
     }
 }

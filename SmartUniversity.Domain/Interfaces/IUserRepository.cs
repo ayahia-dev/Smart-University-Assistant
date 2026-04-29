@@ -16,5 +16,6 @@ namespace SmartUniversity.Domain.Interfaces
         Task<bool> ExistsByEmailAsync(string email);
         Task UpdateAsync(User user);
         Task DeleteAsync(User user);
+        Task<bool> HasCoursesAsync(int doctorId);
     }
 }

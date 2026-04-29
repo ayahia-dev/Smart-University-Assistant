@@ -42,5 +42,10 @@ namespace SmartUniversity.Infrastructure
             _context.StudentGrades.Update(grade);
             await _context.SaveChangesAsync();
         }
+        public async Task<StudentGrade?> GetByStudentAndCourse(int studentId, int courseId)
+        {
+            return await _context.StudentGrades
+                .FirstOrDefaultAsync(x => x.StudentId == studentId && x.CourseId == courseId);
+        }
     }
 }

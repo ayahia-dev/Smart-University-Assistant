@@ -33,5 +33,13 @@ namespace SmartUniversity.API.Controllers
             await _service.CreateAsync(dto);
             return Ok("Course created successfully");
         }
+
+        [HttpPost("{courseId}/grading")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> SetGrading(int courseId, SetGradingDto dto)
+        {
+            await _service.SetGrading(courseId, dto.MaxMidterm, dto.MaxFinal);
+            return Ok("Grading scheme updated successfully");
+        }
     }
 }

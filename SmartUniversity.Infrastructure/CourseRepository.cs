@@ -51,4 +51,9 @@ public class CourseRepository : ICourseRepository
     {
         return await _context.Courses.AnyAsync(x => x.Code == code);
     }
+    public async Task UpdateAsync(Course course)
+    {
+        _context.Courses.Update(course);
+        await _context.SaveChangesAsync();
+    }
 }

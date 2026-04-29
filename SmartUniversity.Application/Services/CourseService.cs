@@ -58,5 +58,16 @@ namespace SmartUniversity.Application.Services
 
             await _repo.AddAsync(course);
         }
+        public async Task SetGrading(int courseId, double maxMid, double maxFinal)
+        {
+            var course = await _repo.GetByIdAsync(courseId);
+
+            if (course == null)
+                throw new Exception("Course not found");
+
+            course.SetGradingScheme(maxMid, maxFinal);
+
+            await _repo.UpdateAsync(course);
+        }
     }
 }

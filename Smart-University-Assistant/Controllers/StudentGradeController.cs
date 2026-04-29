@@ -16,19 +16,6 @@ public class StudentGradeController : ControllerBase
         _service = service;
     }
 
-    [HttpPost]
-    [Authorize(Roles = "Doctor")]
-    public async Task<IActionResult> AddGrade(AddGradeDto dto)
-    {
-        await _service.AddOrUpdate(
-            dto.StudentId,
-            dto.CourseId,
-            dto.Midterm,
-            dto.Final
-        );
-
-        return Ok();
-    }
 
     [HttpPost("publish/{courseId}")]
     [Authorize(Roles = "Admin")]
@@ -47,5 +34,19 @@ public class StudentGradeController : ControllerBase
         var result = await _service.GetStudentGrade(studentId, courseId);
 
         return Ok(result);
+    }
+    [HttpPost("midterm")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> AddMidterm(AddMidtermDto dto)
+    {
+        await _service.SetMidterm(dto.StudentId, dto.CourseId, dto.Midterm);
+        return Ok();
+    }
+    [HttpPost("final")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> AddFinal(AddFinalDto dto)
+    {
+        await _service.SetFinal(dto.StudentId, dto.CourseId, dto.Final);
+        return Ok();
     }
 }

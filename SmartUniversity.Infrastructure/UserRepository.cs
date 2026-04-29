@@ -71,4 +71,9 @@ public class UserRepository : IUserRepository
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
     }
+    public async Task<bool> HasCoursesAsync(int doctorId)
+    {
+        return await _context.Courses
+            .AnyAsync(c => c.DoctorId == doctorId);
+    }
 }

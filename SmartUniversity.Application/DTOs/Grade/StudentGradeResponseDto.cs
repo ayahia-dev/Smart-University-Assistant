@@ -4,11 +4,13 @@ using System.Text;
 
 namespace SmartUniversity.Application.DTOs.Grade
 {
-    public class AddGradeDto
+    public class StudentGradeResponseDto
     {
-        public int StudentId { get; set; }
-        public int CourseId { get; set; }
         public double Midterm { get; set; }
         public double Final { get; set; }
+
+        public double MaxMidterm { get; set; }
+        public double MaxFinal { get; set; }
+        public double Total { get; set; }
     }
 }

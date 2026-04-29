@@ -12,5 +12,7 @@ namespace SmartUniversity.Domain.Interfaces
 
         Task AddAsync(StudentGrade grade);
         Task UpdateAsync(StudentGrade grade);
+        Task<StudentGrade?> GetByStudentAndCourse(int studentId, int courseId);
+
     }
 }

@@ -100,6 +100,14 @@ public class UserService : IUserService
         if (user == null)
             throw new BadRequestException("User not found");
 
+        if (user.Role == "Doctor")
+        {
+            var hasCourses = await _repo.HasCoursesAsync(id);
+
+            if (hasCourses)
+                throw new BadRequestException("Cannot delete doctor with assigned courses");
+        }
+
         await _repo.DeleteAsync(user);
     }
 }
