@@ -1,4 +1,5 @@
 ﻿using SmartUniversity.Application.DTOs.Quiz;
+using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Domain.Entities;
 using SmartUniversity.Domain.Interfaces;
 
@@ -26,21 +27,21 @@ public class QuizSubmissionService
     {
         var quiz = await _quizRepo.GetByIdAsync(dto.QuizId);
         if (quiz == null)
-            throw new Exception("Quiz not found");
+            throw new BadRequestException("Quiz not found");
 
         var submission = await _repo.GetAsync(dto.QuizId, studentId);
         if (submission == null || submission.StartTime == null)
-            throw new Exception("You must start the quiz first");
+            throw new BadRequestException("You must start the quiz first");
 
         var now = DateTime.UtcNow;
 
         var elapsedMinutes = (now - submission.StartTime.Value).TotalMinutes;
 
         if (elapsedMinutes > quiz.DurationMinutes)
-            throw new Exception("Time is over");
+            throw new BadRequestException("Time is over");
 
         if (submission.Score > 0)
-            throw new Exception("Quiz already submitted");
+            throw new BadRequestException("Quiz already submitted");
 
         var questions = await _questionRepo.GetByQuizWithOptionsAsync(dto.QuizId);
 
@@ -83,7 +84,7 @@ public class QuizSubmissionService
         var submission = await _repo.GetAsync(quizId, studentId);
 
         if (submission == null)
-            throw new Exception("No submission found");
+            throw new BadRequestException("No submission found");
 
         var questions = await _questionRepo.GetByQuizWithOptionsAsync(quizId);
         var answers = await _answerRepo.GetBySubmissionIdAsync(submission.Id);
@@ -123,7 +124,7 @@ public class QuizSubmissionService
         var quiz = await _quizRepo.GetByIdAsync(quizId);
 
         if (quiz == null)
-            throw new Exception("Quiz not found");
+            throw new BadRequestException("Quiz not found");
 
         var now = DateTime.UtcNow;
 
@@ -140,14 +141,14 @@ public class QuizSubmissionService
         var quiz = await _quizRepo.GetByIdAsync(quizId);
 
         if (quiz == null)
-            throw new Exception("Quiz not found");
+            throw new BadRequestException("Quiz not found");
 
         var existing = await _repo.GetAsync(quizId, studentId);
 
         if (existing != null)
         {
             if (existing.StartTime == null)
-                throw new Exception("Invalid state");
+                throw new BadRequestException("Invalid state");
 
             var remaining = quiz.DurationMinutes * 60 -
                 (int)(DateTime.UtcNow - existing.StartTime.Value).TotalSeconds;

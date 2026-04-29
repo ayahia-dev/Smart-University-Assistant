@@ -14,7 +14,9 @@ public class UserRepository : IUserRepository
 
     public async Task<List<User>> GetPagedAsync(string? name, string? role, int page, int pageSize)
     {
-        var query = _context.Users.AsQueryable();
+        var query = _context.Users
+        .Include(x => x.Faculty) 
+        .AsQueryable();
 
         if (!string.IsNullOrEmpty(name))
             query = query.Where(x => x.FullName.Contains(name));

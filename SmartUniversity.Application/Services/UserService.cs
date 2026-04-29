@@ -28,7 +28,9 @@ public class UserService : IUserService
             FullName = x.FullName,
             Email = x.Email,
             Role = x.Role,
-            FacultyId = x.FacultyId
+            FacultyId = x.FacultyId,
+            NationalId = x.NationalId, 
+            FacultyName = x.Faculty != null ? x.Faculty.Name : null 
         });
 
         return new PagedResult<UserDto>
