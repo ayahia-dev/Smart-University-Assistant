@@ -9,7 +9,7 @@ public class QuizSubmission
 
     public int StudentId { get; private set; }
     public User Student { get; private set; }
-
+    public bool IsSubmitted { get; private set; }
     public double Score { get; private set; }
 
     public ICollection<QuizAnswer> Answers { get; private set; }
@@ -17,7 +17,7 @@ public class QuizSubmission
 
     public DateTime SubmittedAt { get; private set; }
 
-    public DateTime? StartTime { get; private set; } // 🔥 nullable
+    public DateTime? StartTime { get; private set; } 
 
     private QuizSubmission() { }
 
@@ -27,8 +27,7 @@ public class QuizSubmission
         StudentId = studentId;
         Score = score;
 
-        SubmittedAt = DateTime.UtcNow;
-        StartTime = null; // ❌ لسه مبدأش
+        StartTime = null;
     }
 
     public void Start()
@@ -42,5 +41,7 @@ public class QuizSubmission
     public void SetScore(double score)
     {
         Score = score;
+        IsSubmitted = true;
+        SubmittedAt = DateTime.UtcNow; 
     }
 }

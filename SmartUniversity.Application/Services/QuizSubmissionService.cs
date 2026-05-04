@@ -40,7 +40,7 @@ public class QuizSubmissionService
         if (elapsedMinutes > quiz.DurationMinutes)
             throw new BadRequestException("Time is over");
 
-        if (submission.Score > 0)
+        if (submission.IsSubmitted)
             throw new BadRequestException("Quiz already submitted");
 
         var questions = await _questionRepo.GetByQuizWithOptionsAsync(dto.QuizId);
