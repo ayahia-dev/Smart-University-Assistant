@@ -76,7 +76,7 @@ namespace SmartUniversity.Application.Services
             var course = await _courseRepo.GetByIdAsync(courseId);
 
             if (grade == null)
-                throw new Exception("No grade found");
+                throw new BadRequestException("No grade found");
 
             if (!grade.IsPublished)
                 throw new BadRequestException("Result not published yet");

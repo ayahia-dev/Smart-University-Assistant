@@ -1,4 +1,5 @@
-﻿using SmartUniversity.Application.DTOs.Quiz;
+﻿using SmartUniversity.Application.DTOs.Question;
+using SmartUniversity.Application.DTOs.Quiz;
 using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
@@ -11,15 +12,18 @@ namespace SmartUniversity.Application.Services
         private readonly IQuizRepository _repo;
         private readonly IGenericRepository<Quiz> _genericRepo;
         private readonly IQuizSubmissionRepository _submissionRepo; 
+        private readonly IQuestionRepository _questionRepository;
 
         public QuizService(
             IQuizRepository repo,
             IGenericRepository<Quiz> genericRepo,
-            IQuizSubmissionRepository submissionRepo) 
+            IQuizSubmissionRepository submissionRepo,
+            IQuestionRepository questionRepository) 
         {
             _repo = repo;
             _genericRepo = genericRepo;
             _submissionRepo = submissionRepo; 
+            _questionRepository = questionRepository;
         }
 
         public async Task<int> CreateAsync(CreateQuizDto dto)
@@ -88,6 +92,30 @@ namespace SmartUniversity.Application.Services
 
             await _submissionRepo.AddAsync(submission);
             await _submissionRepo.SaveChangesAsync();
+        }
+        public async Task<List<QuestionDto>> GetQuizQuestionsWithAnswers(int quizId)
+        {
+            var questions = await _questionRepository.GetByQuizWithOptionsAsync(quizId);
+
+            if (questions == null || !questions.Any())
+                throw new Exception("No questions found for this quiz");
+
+            var result = questions.Select(q => new QuestionDto
+            {
+                Id = q.Id,
+                Text = q.Text,
+                Grade = q.Grade,
+
+                Options = q.Options.Select(o => new OptionDto
+                {
+                    Id = o.Id,
+                    Text = o.Text,
+                    IsCorrect = o.IsCorrect
+                }).ToList()
+
+            }).ToList();
+
+            return result;
         }
     }
 }

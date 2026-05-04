@@ -58,4 +58,10 @@ public class QuizController : ControllerBase
 
         return Ok("Quiz started");
     }
+    [HttpGet("{quizId}/questionsWithAnswers")]
+    public async Task<IActionResult> GetQuestions(int quizId)
+    {
+        var result = await _service.GetQuizQuestionsWithAnswers(quizId);
+        return Ok(result);
+    }
 }
