@@ -119,12 +119,14 @@ public class QuizSubmissionService
         return result;
     }
 
-    public async Task<object> GetQuizStatusAsync(int quizId)
+    public async Task<object> GetQuizStatusAsync(int quizId, int studentId)
     {
         var quiz = await _quizRepo.GetByIdAsync(quizId);
 
         if (quiz == null)
             throw new BadRequestException("Quiz not found");
+
+        var submission = await _repo.GetAsync(quizId, studentId);
 
         var now = DateTime.UtcNow;
 
@@ -132,6 +134,7 @@ public class QuizSubmissionService
         {
             hasStarted = quiz.HasStarted(now),
             isFinished = quiz.IsFinished(now),
+            isSubmitted = submission?.IsSubmitted ?? false, 
             remainingSeconds = (int)quiz.GetRemainingTime(now).TotalSeconds
         };
     }

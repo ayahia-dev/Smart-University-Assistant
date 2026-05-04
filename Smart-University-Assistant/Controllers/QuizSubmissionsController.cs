@@ -47,7 +47,9 @@ public class QuizSubmissionsController : ControllerBase
     [HttpGet("status/{quizId}")]
     public async Task<IActionResult> GetStatus(int quizId)
     {
-        var result = await _service.GetQuizStatusAsync(quizId);
+        var studentId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+        var result = await _service.GetQuizStatusAsync(quizId, studentId);
         return Ok(result);
     }
 }
