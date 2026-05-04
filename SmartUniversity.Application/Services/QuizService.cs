@@ -22,7 +22,7 @@ namespace SmartUniversity.Application.Services
             _submissionRepo = submissionRepo; 
         }
 
-        public async Task CreateAsync(CreateQuizDto dto)
+        public async Task<int> CreateAsync(CreateQuizDto dto)
         {
             var quiz = new Quiz(
                 dto.CourseId,
@@ -34,6 +34,7 @@ namespace SmartUniversity.Application.Services
 
             await _genericRepo.AddAsync(quiz);
             await _genericRepo.SaveChangesAsync();
+            return quiz.Id;
         }
 
         public async Task<IEnumerable<QuizDto>> GetByCourseAsync(int courseId)

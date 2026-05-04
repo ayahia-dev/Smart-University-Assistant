@@ -20,8 +20,8 @@ public class QuizController : ControllerBase
     [Authorize(Roles = "Doctor")]
     public async Task<IActionResult> Create(CreateQuizDto dto)
     {
-        await _service.CreateAsync(dto);
-        return Ok();
+        var id = await _service.CreateAsync(dto);
+        return Ok(new { id = id });
     }
 
     [HttpGet("/api/courses/{courseId}/quizzes")]
