@@ -56,4 +56,10 @@ public class CourseRepository : ICourseRepository
         _context.Courses.Update(course);
         await _context.SaveChangesAsync();
     }
+    public async Task<List<Course>> GetByDoctorIdAsync(int doctorId)
+    {
+        return await _context.Courses
+            .Where(c => c.DoctorId == doctorId)
+            .ToListAsync();
+    }
 }

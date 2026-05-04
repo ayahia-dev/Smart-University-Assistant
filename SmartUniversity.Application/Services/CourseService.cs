@@ -69,5 +69,18 @@ namespace SmartUniversity.Application.Services
 
             await _repo.UpdateAsync(course);
         }
+        public async Task<List<CourseDto>> GetDoctorCourses(int doctorId)
+        {
+            var courses = await _repo.GetByDoctorIdAsync(doctorId);
+
+            return courses.Select(x => new CourseDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Description = x.Description,
+                FacultyId = x.FacultyId,
+                DoctorId = x.DoctorId
+            }).ToList();
+        }
     }
 }

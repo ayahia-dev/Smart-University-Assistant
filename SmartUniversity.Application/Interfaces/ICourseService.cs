@@ -10,5 +10,6 @@ namespace SmartUniversity.Application.Interfaces
         Task<object> GetPagedAsync(string? name, int page, int pageSize);
         Task CreateAsync(CreateCourseDto dto);
         Task SetGrading(int courseId, double maxMid, double maxFinal);
+        Task<List<CourseDto>> GetDoctorCourses(int doctorId);
     }
 }

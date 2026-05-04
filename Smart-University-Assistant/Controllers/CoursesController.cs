@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SmartUniversity.Application.DTOs.Course;
 using SmartUniversity.Application.Interfaces;
+using System.Security.Claims;
 
 namespace SmartUniversity.API.Controllers
 {
@@ -40,6 +41,17 @@ namespace SmartUniversity.API.Controllers
         {
             await _service.SetGrading(courseId, dto.MaxMidterm, dto.MaxFinal);
             return Ok("Grading scheme updated successfully");
+        }
+
+        [HttpGet("doctor")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> GetMyCourses()
+        {
+            var doctorId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var result = await _service.GetDoctorCourses(doctorId);
+
+            return Ok(result);
         }
     }
 }
