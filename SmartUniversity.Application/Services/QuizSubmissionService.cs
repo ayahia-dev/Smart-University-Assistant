@@ -132,10 +132,12 @@ public class QuizSubmissionService
 
         return new
         {
-            hasStarted = quiz.HasStarted(now),
+            hasStarted = submission?.StartTime != null, 
             isFinished = quiz.IsFinished(now),
-            isSubmitted = submission?.IsSubmitted ?? false, 
-            remainingSeconds = (int)quiz.GetRemainingTime(now).TotalSeconds
+            isSubmitted = submission?.IsSubmitted ?? false,
+            remainingSeconds = submission?.StartTime != null
+        ? (int)(quiz.DurationMinutes * 60 -
+            (DateTime.UtcNow - submission.StartTime.Value).TotalSeconds): quiz.DurationMinutes * 60
         };
     }
 
