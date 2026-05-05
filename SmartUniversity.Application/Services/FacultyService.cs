@@ -1,4 +1,5 @@
 ﻿using SmartUniversity.Application.DTOs.Faculties;
+using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
 using System;
@@ -46,6 +47,7 @@ namespace SmartUniversity.Application.Services
             var faculty = new Faculty(dto.Name);
 
             await _facultyRepository.AddAsync(faculty);
+            await _facultyRepository.SaveChangesAsync(); 
 
             return faculty.Id;
         }
@@ -55,11 +57,12 @@ namespace SmartUniversity.Application.Services
             var faculty = await _facultyRepository.GetByIdAsync(id);
 
             if (faculty == null)
-                throw new Exception("Faculty not found");
+                throw new BadRequestException("Faculty not found");
 
             var updatedFaculty = new Faculty(id, dto.Name);
 
             _facultyRepository.Update(updatedFaculty);
+            await _facultyRepository.SaveChangesAsync(); 
         }
 
         public async Task DeleteAsync(int id)
@@ -67,9 +70,10 @@ namespace SmartUniversity.Application.Services
             var faculty = await _facultyRepository.GetByIdAsync(id);
 
             if (faculty == null)
-                throw new Exception("Faculty not found");
+                throw new BadRequestException("Faculty not found");
 
             _facultyRepository.Delete(faculty);
+            await _facultyRepository.SaveChangesAsync();
         }
     }
 }
