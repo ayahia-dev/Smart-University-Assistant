@@ -48,6 +48,8 @@ builder.Services.AddScoped<IQuizSubmissionRepository, QuizSubmissionRepository>(
 builder.Services.AddScoped<IQuizAnswerRepository, QuizAnswerRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
+builder.Services.AddScoped<IFacultyChecker, FacultyChecker>();
+builder.Services.AddScoped<ICourseStudentQuery, CourseStudentQuery>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();

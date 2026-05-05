@@ -11,10 +11,14 @@ namespace SmartUniversity.API.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly ICourseService _service;
+        private readonly ICourseStudentQuery _courseStudentQuery;
 
-        public CoursesController(ICourseService service)
+        public CoursesController(
+            ICourseService service,
+            ICourseStudentQuery courseStudentQuery)
         {
             _service = service;
+            _courseStudentQuery = courseStudentQuery;
         }
 
         [HttpGet]
@@ -52,6 +56,13 @@ namespace SmartUniversity.API.Controllers
             var result = await _service.GetDoctorCourses(doctorId);
 
             return Ok(result);
+        }
+
+        [HttpGet("{courseId}/students")]
+        public async Task<IActionResult> GetStudents(int courseId)
+        {
+            var students = await _courseStudentQuery.GetStudentsByCourseIdAsync(courseId);
+            return Ok(students);
         }
     }
 }

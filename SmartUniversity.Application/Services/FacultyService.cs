@@ -2,19 +2,25 @@
 using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
+using SmartUniversity.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 
 namespace SmartUniversity.Application.Services
 {
     public class FacultyService
     {
         private readonly IGenericRepository<Faculty> _facultyRepository;
+        private readonly IFacultyChecker _facultyChecker;
 
-        public FacultyService(IGenericRepository<Faculty> facultyRepository)
+        public FacultyService(
+            IGenericRepository<Faculty> facultyRepository,
+            IFacultyChecker facultyChecker)
         {
             _facultyRepository = facultyRepository;
+            _facultyChecker = facultyChecker;
         }
 
         public async Task<IEnumerable<FacultyResponseDto>> GetAllAsync()
@@ -59,10 +65,10 @@ namespace SmartUniversity.Application.Services
             if (faculty == null)
                 throw new BadRequestException("Faculty not found");
 
-            var updatedFaculty = new Faculty(id, dto.Name);
+            faculty.UpdateName(dto.Name); 
 
-            _facultyRepository.Update(updatedFaculty);
-            await _facultyRepository.SaveChangesAsync(); 
+            _facultyRepository.Update(faculty);
+            await _facultyRepository.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
@@ -71,6 +77,9 @@ namespace SmartUniversity.Application.Services
 
             if (faculty == null)
                 throw new BadRequestException("Faculty not found");
+
+            if (await _facultyChecker.HasUsersAsync(id))
+                throw new BadRequestException("Cannot delete faculty because it has users");
 
             _facultyRepository.Delete(faculty);
             await _facultyRepository.SaveChangesAsync();

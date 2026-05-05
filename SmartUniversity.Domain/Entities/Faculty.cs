@@ -28,5 +28,9 @@ namespace SmartUniversity.Domain.Entities
         {
             Name = name;
         }
+        public void UpdateName(string name)
+        {
+            Name = name;
+        }
     }
 }
