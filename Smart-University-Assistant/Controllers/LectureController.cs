@@ -1,17 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartUniversity.Application.DTOs.Lecture;
+using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Application.Services;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/lectures")]
 public class LectureController : ControllerBase
 {
     private readonly LectureService _service;
+    private readonly ILectureQuery _lectureQuery;
 
-    public LectureController(LectureService service)
+    public LectureController(LectureService service, ILectureQuery lectureQuery)
     {
         _service = service;
+        _lectureQuery = lectureQuery;
     }
 
     [HttpPost]
@@ -43,5 +47,17 @@ public class LectureController : ControllerBase
     {
         await _service.Delete(id);
         return Ok();
+    }
+
+    [HttpGet("doctor")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> GetDoctorLectures()
+    {
+        var doctorId = int.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        var result = await _lectureQuery.GetDoctorLecturesAsync(doctorId);
+
+        return Ok(result);
     }
 }

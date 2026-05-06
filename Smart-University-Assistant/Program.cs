@@ -71,6 +71,7 @@ builder.Services.AddScoped<LectureService>();
 builder.Services.AddScoped<StudentGradeService>();
 
 
+
 builder.Services.AddHttpClient<AiService>();
 
 // Auth
