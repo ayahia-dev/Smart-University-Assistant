@@ -5,16 +5,20 @@ using SmartUniversity.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SmartUniversity.Application.Exceptions;
 
 namespace SmartUniversity.Application.Services
 {
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _repo;
-
-        public CourseService(ICourseRepository repo)
+        private readonly IGenericRepository<Course> _genericRepo;
+        private readonly ICourseChecker _courseChecker;
+        public CourseService(ICourseRepository repo,IGenericRepository<Course> genericRepo,ICourseChecker courseChecker)
         {
             _repo = repo;
+            _genericRepo = genericRepo;
+            _courseChecker = courseChecker;
         }
 
         public async Task<object> GetPagedAsync(string? name, int page, int pageSize)
@@ -25,10 +29,14 @@ namespace SmartUniversity.Application.Services
             var data = courses.Select(x => new CourseDto
             {
                 Id = x.Id,
+                Code = x.Code,
                 Name = x.Name,
                 Description = x.Description,
+                DoctorId = x.DoctorId,
                 FacultyId = x.FacultyId,
-                DoctorId = x.DoctorId
+
+                DoctorName = x.Doctor.FullName,
+                FacultyName = x.Faculty.Name
             });
 
             return new
@@ -81,6 +89,21 @@ namespace SmartUniversity.Application.Services
                 FacultyId = x.FacultyId,
                 DoctorId = x.DoctorId
             }).ToList();
+        }
+        public async Task DeleteAsync(int id)
+        {
+            var course = await _repo.GetByIdAsync(id);
+
+            if (course == null)
+                throw new BadRequestException("Course not found");
+
+            if (await _courseChecker.HasEnrollmentsAsync(id))
+                throw new BadRequestException(
+                    "Cannot delete course because students are enrolled in it");
+
+            _genericRepo.Delete(course);
+
+            await _genericRepo.SaveChangesAsync();
         }
     }
 }

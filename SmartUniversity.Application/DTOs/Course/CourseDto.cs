@@ -12,7 +12,9 @@ namespace SmartUniversity.Application.DTOs.Course
         public string Description { get; set; }
         public int DoctorId { get; set; }
         public int FacultyId { get; set; }
+        public string DoctorName { get; set; }
 
+        public string FacultyName { get; set; }
         public DateTime EnrolledAt { get; set; }
     }
 }

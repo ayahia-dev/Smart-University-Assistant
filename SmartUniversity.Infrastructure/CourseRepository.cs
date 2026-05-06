@@ -14,7 +14,10 @@ public class CourseRepository : ICourseRepository
 
     public async Task<List<Course>> GetPagedAsync(string? name, int page, int pageSize)
     {
-        var query = _context.Courses.AsQueryable();
+        var query = _context.Courses
+         .Include(x => x.Doctor)
+         .Include(x => x.Faculty)
+         .AsQueryable();
 
         if (!string.IsNullOrEmpty(name))
             query = query.Where(x => x.Name.Contains(name));

@@ -64,5 +64,13 @@ namespace SmartUniversity.API.Controllers
             var students = await _courseStudentQuery.GetStudentsByCourseIdAsync(courseId);
             return Ok(students);
         }
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _service.DeleteAsync(id);
+
+            return NoContent();
+        }
     }
 }

@@ -50,6 +50,7 @@ builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IStudentGradeRepository, StudentGradeRepository>();
 builder.Services.AddScoped<IFacultyChecker, FacultyChecker>();
 builder.Services.AddScoped<ICourseStudentQuery, CourseStudentQuery>();
+builder.Services.AddScoped<ICourseChecker, CourseChecker>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -70,6 +71,7 @@ builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<LectureService>();
 builder.Services.AddScoped<StudentGradeService>();
 builder.Services.AddScoped<ILectureQuery, LectureQuery>();
+
 
 
 builder.Services.AddHttpClient<AiService>();
