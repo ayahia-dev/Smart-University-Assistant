@@ -69,7 +69,7 @@ builder.Services.AddScoped<NewsService>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<LectureService>();
 builder.Services.AddScoped<StudentGradeService>();
-
+builder.Services.AddScoped<ILectureQuery, LectureQuery>();
 
 
 builder.Services.AddHttpClient<AiService>();

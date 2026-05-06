@@ -40,7 +40,7 @@ namespace SmartUniversity.API.Controllers
         }
 
         [HttpPost("{courseId}/grading")]
-        [Authorize(Roles = "Doctor")]
+        //[Authorize(Roles = "Doctor")]
         public async Task<IActionResult> SetGrading(int courseId, SetGradingDto dto)
         {
             await _service.SetGrading(courseId, dto.MaxMidterm, dto.MaxFinal);
