@@ -12,7 +12,6 @@ public class AdminController : ControllerBase
         _aiIntegrationService = aiIntegrationService;
     }
 
-    // 🔥 AI Analysis من الداتا الحقيقية
     [HttpGet("ai-analysis/{courseId}")]
     [Authorize(Roles = "Admin,Doctor")]
     public async Task<IActionResult> Analyze(int courseId)
