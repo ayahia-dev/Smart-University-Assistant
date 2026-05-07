@@ -17,6 +17,8 @@ namespace SmartUniversity.Domain.Entities
 
         public ICollection<Enrollment> Enrollments { get; private set; }
             = new List<Enrollment>();
+        public ICollection<StudentGrade> StudentGrades { get; private set; }
+        = new List<StudentGrade>();
 
         private User() { }
 

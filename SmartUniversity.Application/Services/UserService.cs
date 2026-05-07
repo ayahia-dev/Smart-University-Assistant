@@ -119,7 +119,16 @@ public class UserService : IUserService
         return users.Select(x => new StudentDto
         {
             Id = x.Id,
-            FullName = x.FullName
+
+            FullName = x.FullName,
+
+            FacultyName = x.Faculty.Name,
+
+            IsPublished =
+        x.StudentGrades.Any()
+        &&
+        x.StudentGrades.All(g => g.IsPublished)
+
         }).ToList();
     }
 }

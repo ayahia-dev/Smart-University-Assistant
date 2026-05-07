@@ -79,6 +79,8 @@ public class UserRepository : IUserRepository
     public async Task<List<User>> GetStudentsByFacultyAsync(int facultyId)
     {
         return await _context.Users
+            .Include(x => x.Faculty)
+            .Include(x => x.StudentGrades)
             .Where(x =>
                 x.Role == "Student" &&
                 x.FacultyId == facultyId)
