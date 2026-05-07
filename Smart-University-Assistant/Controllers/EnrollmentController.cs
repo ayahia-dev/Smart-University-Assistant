@@ -29,4 +29,16 @@ public class EnrollmentController : ControllerBase
         var result = await _service.GetMyCoursesAsync(studentId);
         return Ok(result);
     }
+    [HttpDelete("{studentId}/{courseId}")]
+    public async Task<IActionResult> RemoveEnrollment(
+    int studentId,
+    int courseId)
+    {
+        await _service.RemoveEnrollmentAsync(studentId, courseId);
+
+        return Ok(new
+        {
+            message = "Enrollment removed successfully"
+        });
+    }
 }

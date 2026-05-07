@@ -17,5 +17,6 @@ namespace SmartUniversity.Domain.Interfaces
         Task UpdateAsync(User user);
         Task DeleteAsync(User user);
         Task<bool> HasCoursesAsync(int doctorId);
+        Task<List<User>> GetStudentsByFacultyAsync(int facultyId);
     }
 }

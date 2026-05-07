@@ -1,4 +1,5 @@
 ﻿using SmartUniversity.Application.DTOs.pagination;
+using SmartUniversity.Application.DTOs.Student;
 using SmartUniversity.Application.DTOs.User;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,6 @@ namespace SmartUniversity.Application.Interfaces
         Task CreateAsync(CreateUserDto dto);
         Task UpdateAsync(int id, UpdateUserDto dto);
         Task DeleteAsync(int id);
+        Task<List<StudentDto>> GetStudentsByFaculty(int facultyId);
     }
 }

@@ -13,6 +13,9 @@ namespace SmartUniversity.Domain.Interfaces
 
         Task<List<Enrollment>> GetByStudentIdAsync(int studentId);
         Task<List<User>> GetStudentsByCourseIdAsync(int courseId);
+        Task<Enrollment?> GetAsync(int studentId, int courseId);
+
+        Task DeleteAsync(Enrollment enrollment);
     }
 }
 

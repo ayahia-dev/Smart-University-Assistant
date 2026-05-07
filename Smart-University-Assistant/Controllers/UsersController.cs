@@ -59,4 +59,12 @@ public class UsersController : ControllerBase
         await _service.DeleteAsync(id);
         return Ok("User deleted successfully");
     }
+
+    [HttpGet("students/by-faculty/{facultyId}")]
+    public async Task<IActionResult> GetStudentsByFaculty(int facultyId)
+    {
+        var users = await _service.GetStudentsByFaculty(facultyId);
+
+        return Ok(users);
+    }
 }

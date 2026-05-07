@@ -65,4 +65,10 @@ public class CourseRepository : ICourseRepository
             .Where(c => c.DoctorId == doctorId)
             .ToListAsync();
     }
+    public async Task<List<Course>> GetByFacultyIdAsync(int facultyId)
+    {
+        return await _context.Courses
+            .Where(x => x.FacultyId == facultyId)
+            .ToListAsync();
+    }
 }

@@ -46,4 +46,20 @@ public class EnrollmentRepository : IEnrollmentRepository
             .Select(e => e.Student)
             .ToListAsync();
     }
+    public async Task<Enrollment?> GetAsync(
+    int studentId,
+    int courseId)
+    {
+        return await _context.Enrollments
+            .FirstOrDefaultAsync(x =>
+                x.StudentId == studentId &&
+                x.CourseId == courseId);
+    }
+
+    public async Task DeleteAsync(Enrollment enrollment)
+    {
+        _context.Enrollments.Remove(enrollment);
+
+        await _context.SaveChangesAsync();
+    }
 }

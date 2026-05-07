@@ -72,5 +72,13 @@ namespace SmartUniversity.API.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("by-faculty/{facultyId}")]
+        public async Task<IActionResult> GetByFaculty(int facultyId)
+        {
+            var courses = await _service.GetByFaculty(facultyId);
+
+            return Ok(courses);
+        }
     }
 }

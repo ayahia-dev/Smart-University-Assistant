@@ -14,5 +14,6 @@ namespace SmartUniversity.Domain.Interfaces
         Task AddAsync(Course course);
         Task UpdateAsync(Course course);
         Task<List<Course>> GetByDoctorIdAsync(int doctorId);
+        Task<List<Course>> GetByFacultyIdAsync(int facultyId);
     }
 }

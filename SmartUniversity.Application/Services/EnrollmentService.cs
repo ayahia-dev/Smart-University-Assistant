@@ -1,4 +1,5 @@
 ﻿using SmartUniversity.Application.DTOs.Course;
+using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
 using SmartUniversity.Domain.Interfaces;
@@ -15,7 +16,7 @@ public class EnrollmentService : IEnrollmentService
     public async Task EnrollAsync(int studentId, int courseId)
     {
         if (await _repo.ExistsAsync(studentId, courseId))
-            throw new Exception("Already enrolled");
+            throw new BadRequestException("Student already enrolled in this course");
 
         var enrollment = new Enrollment(studentId, courseId);
 
@@ -38,5 +39,18 @@ public class EnrollmentService : IEnrollmentService
                 DoctorId = x.Course.DoctorId,
                 EnrolledAt = x.EnrolledAt
             });
+    }
+    public async Task RemoveEnrollmentAsync(
+    int studentId,
+    int courseId)
+    {
+        var enrollment =
+            await _repo.GetAsync(studentId, courseId);
+
+        if (enrollment == null)
+            throw new BadRequestException(
+                "Enrollment not found");
+
+        await _repo.DeleteAsync(enrollment);
     }
 }

@@ -12,5 +12,6 @@ namespace SmartUniversity.Application.Interfaces
         Task EnrollAsync(int studentId, int courseId);
 
         Task<IEnumerable<CourseDto>> GetMyCoursesAsync(int studentId);
+        Task RemoveEnrollmentAsync(int studentId, int courseId);
     }
 }

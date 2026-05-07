@@ -105,5 +105,16 @@ namespace SmartUniversity.Application.Services
 
             await _genericRepo.SaveChangesAsync();
         }
+        public async Task<List<CourseDto>> GetByFaculty(int facultyId)
+        {
+            var courses = await _repo.GetByFacultyIdAsync(facultyId);
+
+            return courses.Select(x => new CourseDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Code = x.Code
+            }).ToList();
+        }
     }
 }

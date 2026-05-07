@@ -76,4 +76,12 @@ public class UserRepository : IUserRepository
         return await _context.Courses
             .AnyAsync(c => c.DoctorId == doctorId);
     }
+    public async Task<List<User>> GetStudentsByFacultyAsync(int facultyId)
+    {
+        return await _context.Users
+            .Where(x =>
+                x.Role == "Student" &&
+                x.FacultyId == facultyId)
+            .ToListAsync();
+    }
 }

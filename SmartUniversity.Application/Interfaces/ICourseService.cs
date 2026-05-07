@@ -12,5 +12,6 @@ namespace SmartUniversity.Application.Interfaces
         Task SetGrading(int courseId, double maxMid, double maxFinal);
         Task<List<CourseDto>> GetDoctorCourses(int doctorId);
         Task DeleteAsync(int id);
+        Task<List<CourseDto>> GetByFaculty(int facultyId);
     }
 }

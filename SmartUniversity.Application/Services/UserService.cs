@@ -1,4 +1,5 @@
 ﻿using SmartUniversity.Application.DTOs.pagination;
+using SmartUniversity.Application.DTOs.Student;
 using SmartUniversity.Application.DTOs.User;
 using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
@@ -109,5 +110,16 @@ public class UserService : IUserService
         }
 
         await _repo.DeleteAsync(user);
+    }
+    public async Task<List<StudentDto>> GetStudentsByFaculty(int facultyId)
+    {
+        var users =
+            await _repo.GetStudentsByFacultyAsync(facultyId);
+
+        return users.Select(x => new StudentDto
+        {
+            Id = x.Id,
+            FullName = x.FullName
+        }).ToList();
     }
 }
