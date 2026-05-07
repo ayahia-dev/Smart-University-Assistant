@@ -47,5 +47,16 @@ namespace SmartUniversity.Infrastructure
             return await _context.StudentGrades
                 .FirstOrDefaultAsync(x => x.StudentId == studentId && x.CourseId == courseId);
         }
+        public async Task<List<StudentGrade>> GetByStudentIdAsync(int studentId)
+        {
+            return await _context.StudentGrades
+
+                .Include(x => x.Course)
+                    .ThenInclude(c => c.Doctor)
+
+                .Where(x => x.StudentId == studentId)
+
+                .ToListAsync();
+        }
     }
 }

@@ -9,12 +9,18 @@ namespace SmartUniversity.Domain.Entities
         public int Id { get; private set; }
 
         public int StudentId { get; private set; }
+
+        public User Student { get; private set; }
+
         public int CourseId { get; private set; }
 
+        public Course Course { get; private set; }
+
         public double MidtermGrade { get; private set; }
+
         public double FinalGrade { get; private set; }
 
-        public bool IsPublished { get; private set; } // 🔥
+        public bool IsPublished { get; private set; }
 
         private StudentGrade() { }
 

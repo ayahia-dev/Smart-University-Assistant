@@ -22,7 +22,10 @@ public class StudentGradeController : ControllerBase
     public async Task<IActionResult> Publish(int courseId)
     {
         await _service.PublishGrades(courseId);
-        return Ok();
+        return Ok(new
+        {
+            message = "Results published successfully"
+        });
     }
 
     [HttpGet("{courseId}")]
@@ -48,5 +51,27 @@ public class StudentGradeController : ControllerBase
     {
         await _service.SetFinal(dto.StudentId, dto.CourseId, dto.Final);
         return Ok();
+    }
+
+    [HttpGet("student/{studentId}")]
+    public async Task<IActionResult>
+    GetStudentResults(int studentId)
+    {
+        var result =
+            await _service.GetStudentResults(studentId);
+
+        return Ok(result);
+    }
+    [HttpPost("publish-student/{studentId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult>
+    PublishStudentResults(int studentId)
+    {
+        await _service.PublishStudentResults(studentId);
+
+        return Ok(new
+        {
+            message = "Results published successfully"
+        });
     }
 }

@@ -124,5 +124,41 @@ namespace SmartUniversity.Application.Services
                 await _repo.UpdateAsync(grade);
             }
         }
+        public async Task<List<StudentResultDto>>GetStudentResults(int studentId)
+        {
+            var grades =
+                await _repo.GetByStudentIdAsync(studentId);
+
+            return grades.Select(x => new StudentResultDto
+            {
+                CourseName = x.Course.Name,
+
+                DoctorName = x.Course.Doctor.FullName,
+
+                Midterm = x.MidtermGrade,
+
+                Final = x.FinalGrade,
+
+                Total = x.GetTotalGrade(),
+
+                IsPublished = x.IsPublished
+            }).ToList();
+        }
+        public async Task PublishStudentResults(int studentId)
+        {
+            var grades =
+                await _repo.GetByStudentIdAsync(studentId);
+
+            if (!grades.Any())
+                throw new BadRequestException(
+                    "No grades found");
+
+            foreach (var grade in grades)
+            {
+                grade.Publish();
+
+                await _repo.UpdateAsync(grade);
+            }
+        }
     }
 }
