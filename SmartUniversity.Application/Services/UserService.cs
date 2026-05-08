@@ -42,7 +42,7 @@ public class UserService : IUserService
             Data = data
         };
     }
-
+    //get by id
     public async Task<UserDto?> GetByIdAsync(int id)
     {
         var user = await _repo.GetByIdAsync(id);
