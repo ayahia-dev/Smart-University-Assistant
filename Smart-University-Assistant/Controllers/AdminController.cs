@@ -20,12 +20,12 @@ public class AdminController : ControllerBase
 
         return Ok(result);
     }
-    [HttpGet("ai-at-risk/{courseId}")]
-    [Authorize(Roles = "Admin,Doctor")]
-    public async Task<IActionResult> GetAtRisk(int courseId)
-    {
-        var result = await _aiIntegrationService.GetStudentsAtRisk(courseId);
+    //[HttpGet("ai-at-risk/{courseId}")]
+    //[Authorize(Roles = "Admin,Doctor")]
+    //public async Task<IActionResult> GetAtRisk(int courseId)
+    //{
+    //    var result = await _aiIntegrationService.GetStudentsAtRisk(courseId);
 
-        return Ok(result);
-    }
+    //    return Ok(result);
+    //}
 }
