@@ -261,11 +261,16 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
                     b.HasIndex("StudentId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Enrollments");
                 });
@@ -540,11 +545,16 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
                     b.HasIndex("StudentId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("StudentGrades");
                 });
@@ -602,7 +612,7 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.HasOne("SmartUniversity.Domain.Entities.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Quiz");
@@ -632,7 +642,7 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.HasOne("SmartUniversity.Domain.Entities.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Assignment");
@@ -698,10 +708,14 @@ namespace SmartUniversity.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("SmartUniversity.Domain.Entities.User", "Student")
-                        .WithMany("Enrollments")
+                        .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("SmartUniversity.Domain.Entities.User", null)
+                        .WithMany("Enrollments")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Course");
 
@@ -774,8 +788,12 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.HasOne("SmartUniversity.Domain.Entities.User", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("SmartUniversity.Domain.Entities.User", null)
+                        .WithMany("StudentGrades")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Course");
 
@@ -828,6 +846,8 @@ namespace SmartUniversity.Infrastructure.Migrations
             modelBuilder.Entity("SmartUniversity.Domain.Entities.User", b =>
                 {
                     b.Navigation("Enrollments");
+
+                    b.Navigation("StudentGrades");
                 });
 #pragma warning restore 612, 618
         }

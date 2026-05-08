@@ -42,6 +42,30 @@ public class ApplicationDbContext : DbContext
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
+            modelBuilder.Entity<StudentGrade>()
+    .HasOne(x => x.Student)
+    .WithMany()
+    .HasForeignKey(x => x.StudentId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Enrollment>()
+                .HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<QuizSubmission>()
+                .HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AssignmentSubmission>()
+                .HasOne(x => x.Student)
+                .WithMany()
+                .HasForeignKey(x => x.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<User>()
            .HasIndex(u => u.NationalId)
            .IsUnique();

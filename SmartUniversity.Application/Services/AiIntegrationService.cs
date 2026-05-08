@@ -61,4 +61,61 @@ public class AiIntegrationService
             .Where(x => x.Risk_Level == "High Risk")
             .ToList();
     }
+    public async Task<AiResultDto>
+    AnalyzeStudent(int studentId)
+    {
+        var enrollments =
+            await _enrollmentRepo
+            .GetByStudentIdAsync(studentId);
+
+        var aiInput = new List<StudentAiDto>();
+
+        foreach (var enrollment in enrollments)
+        {
+            var courseId = enrollment.CourseId;
+
+            var quizScores =
+                await _quizRepo
+                .GetStudentQuizScores(studentId);
+
+            var assignmentScores =
+                await _assignmentRepo
+                .GetStudentAssignmentScores(studentId);
+
+            var quizAvg =
+                quizScores.Any()
+                ? quizScores.Average()
+                : 0;
+
+            var assignAvg =
+                assignmentScores.Any()
+                ? assignmentScores.Average()
+                : 0;
+
+            var attendance =
+                await _attendanceRepo
+                .GetAttendancePercentage(
+                    studentId,
+                    courseId
+                );
+
+            var trend =
+                (quizAvg + assignAvg) / 2;
+
+            aiInput.Add(new StudentAiDto
+            {
+                Name = enrollment.Student.FullName,
+                Attendance = attendance,
+                Assignments = assignAvg,
+                Quiz = quizAvg,
+                Trend = trend
+            });
+        }
+
+        var result =
+            await _aiService
+            .AnalyzeStudents(aiInput);
+
+        return result.FirstOrDefault();
+    }
 }

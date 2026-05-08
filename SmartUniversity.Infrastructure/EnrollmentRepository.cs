@@ -27,8 +27,13 @@ public class EnrollmentRepository : IEnrollmentRepository
     public async Task<List<Enrollment>> GetByStudentIdAsync(int studentId)
     {
         return await _context.Enrollments
+
             .Include(x => x.Course)
+
+            .Include(x => x.Student)
+
             .Where(x => x.StudentId == studentId)
+
             .ToListAsync();
     }
 
