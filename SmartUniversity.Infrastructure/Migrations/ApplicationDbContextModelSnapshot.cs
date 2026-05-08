@@ -545,16 +545,11 @@ namespace SmartUniversity.Infrastructure.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
                     b.HasIndex("StudentId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("StudentGrades");
                 });
@@ -786,14 +781,10 @@ namespace SmartUniversity.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("SmartUniversity.Domain.Entities.User", "Student")
-                        .WithMany()
+                        .WithMany("StudentGrades")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("SmartUniversity.Domain.Entities.User", null)
-                        .WithMany("StudentGrades")
-                        .HasForeignKey("UserId");
 
                     b.Navigation("Course");
 

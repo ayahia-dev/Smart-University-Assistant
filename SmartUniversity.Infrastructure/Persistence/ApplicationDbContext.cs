@@ -43,10 +43,10 @@ public class ApplicationDbContext : DbContext
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
             modelBuilder.Entity<StudentGrade>()
-    .HasOne(x => x.Student)
-    .WithMany()
-    .HasForeignKey(x => x.StudentId)
-    .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(x => x.Student)
+            .WithMany(x => x.StudentGrades)
+            .HasForeignKey(x => x.StudentId)
+            .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Enrollment>()
                 .HasOne(x => x.Student)
