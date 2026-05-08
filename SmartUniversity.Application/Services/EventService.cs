@@ -1,4 +1,5 @@
 ﻿using SmartUniversity.Application.DTOs.News_Event;
+using SmartUniversity.Application.Exceptions;
 using SmartUniversity.Application.Interfaces;
 using SmartUniversity.Domain.Entities;
 using System;
@@ -25,6 +26,17 @@ namespace SmartUniversity.Application.Services
         public async Task<IEnumerable<Event>> GetAll()
         {
             return await _repo.GetAllAsync();
+        }
+        public async Task Delete(int id)
+        {
+            var ev = await _repo.GetByIdAsync(id);
+
+            if (ev == null)
+                throw new BadRequestException("Event not found");
+
+            _repo.Delete(ev);
+
+            await _repo.SaveChangesAsync();
         }
     }
 }

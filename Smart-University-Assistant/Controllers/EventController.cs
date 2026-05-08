@@ -27,4 +27,15 @@ public class EventController : ControllerBase
         await _service.Create(dto);
         return Ok();
     }
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _service.Delete(id);
+
+        return Ok(new
+        {
+            message = "Event deleted successfully"
+        });
+    }
 }
