@@ -48,7 +48,11 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByIdAsync(int id)
     {
-        return await _context.Users.FindAsync(id);
+        return await _context.Users
+
+            .Include(x => x.Faculty)
+
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task AddAsync(User user)

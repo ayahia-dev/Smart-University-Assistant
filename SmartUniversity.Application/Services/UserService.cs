@@ -58,7 +58,7 @@ public class UserService : IUserService
             Role = user.Role,
             FacultyId = user.FacultyId,
             NationalId = user.NationalId,
-            FacultyName = user.Faculty.Name
+            FacultyName = user.Faculty?.Name
         };
     }
 
