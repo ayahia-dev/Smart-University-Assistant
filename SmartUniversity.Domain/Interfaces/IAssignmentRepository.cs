@@ -10,6 +10,7 @@ namespace SmartUniversity.Domain.Interfaces
         Task AddAsync(Assignment assignment);
 
         Task<List<Assignment>> GetByCourseIdAsync(int courseId);
-        
+        Task<Assignment?> GetByIdAsync(int id);
+
     }
 }

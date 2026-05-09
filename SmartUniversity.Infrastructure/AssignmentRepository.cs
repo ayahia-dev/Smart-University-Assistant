@@ -24,5 +24,10 @@ public class AssignmentRepository : IAssignmentRepository
             .Where(x => x.CourseId == courseId)
             .ToListAsync();
     }
-    
+    public async Task<Assignment?> GetByIdAsync(int id)
+    {
+        return await _context.Assignments
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
 }

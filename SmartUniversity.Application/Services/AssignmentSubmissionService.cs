@@ -12,10 +12,13 @@ namespace SmartUniversity.Application.Services
     public class AssignmentSubmissionService : IAssignmentSubmissionService
     {
         private readonly IAssignmentSubmissionRepository _repo;
+        private readonly IAssignmentRepository _assignmentRepo;
 
-        public AssignmentSubmissionService(IAssignmentSubmissionRepository repo)
+        public AssignmentSubmissionService(IAssignmentSubmissionRepository repo,IAssignmentRepository assignmentRepo)
         {
             _repo = repo;
+
+            _assignmentRepo = assignmentRepo;
         }
 
         public async Task SubmitAsync(int studentId, SubmitDto dto)
@@ -40,6 +43,15 @@ namespace SmartUniversity.Application.Services
                 dto.AssignmentId,
                 studentId,
                 fileUrl
+            );
+            var assignment =
+            await _assignmentRepo.GetByIdAsync(
+                dto.AssignmentId
+            );
+
+            submission.GradeSubmission(
+                assignment.MaxGrade,
+                "Auto graded"
             );
 
             await _repo.AddAsync(submission);
