@@ -88,7 +88,7 @@ public class UserService : IUserService
         if (user == null)
             throw new BadRequestException("User not found");
 
-        user.UpdateInfo(dto.FullName, dto.FacultyId);
+        user.UpdateInfo(dto.FullName,dto.NationalId,dto.FacultyId);
         user.ChangeRole(dto.Role);
 
         await _repo.UpdateAsync(user);
