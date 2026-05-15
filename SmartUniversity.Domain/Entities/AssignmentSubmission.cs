@@ -23,11 +23,17 @@ public class AssignmentSubmission
 
     private AssignmentSubmission() { }
 
-    public AssignmentSubmission(int assignmentId, int studentId, string fileUrl)
+    public AssignmentSubmission(
+    int assignmentId,
+    int studentId,
+    string fileUrl)
     {
         AssignmentId = assignmentId;
+
         StudentId = studentId;
+
         FileUrl = fileUrl;
+
         SubmittedAt = DateTime.UtcNow;
     }
 

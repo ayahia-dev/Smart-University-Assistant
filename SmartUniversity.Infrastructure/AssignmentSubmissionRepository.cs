@@ -48,11 +48,27 @@ namespace SmartUniversity.Infrastructure
             _context.AssignmentSubmissions.Update(submission);
             await _context.SaveChangesAsync();
         }
-        public async Task<List<double>> GetStudentAssignmentScores(int studentId)
+        public async Task<List<double>> GetStudentAssignmentScores(
+    int studentId,
+    int courseId
+)
         {
             return await _context.AssignmentSubmissions
-                .Where(x => x.StudentId == studentId)
-                .Select(x => x.Grade ?? 0)
+
+                .Include(x => x.Assignment)
+
+                .Where(x =>
+                    x.StudentId == studentId &&
+                    x.Assignment.CourseId == courseId
+                )
+
+                .Select(x =>
+
+                    x.Assignment.MaxGrade == 0
+                    ? 0
+                    : ((x.Grade ?? 0) / x.Assignment.MaxGrade) * 100
+                )
+
                 .ToListAsync();
         }
         public async Task<bool> HasSubmissionsAsync(int assignmentId)

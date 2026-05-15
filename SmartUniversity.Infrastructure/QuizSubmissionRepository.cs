@@ -32,11 +32,26 @@ public class QuizSubmissionRepository : IQuizSubmissionRepository
     {
         await _context.SaveChangesAsync();
     }
-    public async Task<List<double>> GetStudentQuizScores(int studentId)
+    public async Task<List<double>> GetStudentQuizScores(
+    int studentId,
+    int courseId
+)
     {
         return await _context.QuizSubmissions
-            .Where(x => x.StudentId == studentId)
-            .Select(x => x.Score)
+
+            .Include(x => x.Quiz)
+
+            .Where(x =>
+                x.StudentId == studentId &&
+                x.Quiz.CourseId == courseId
+            )
+
+            .Select(x =>
+                x.Quiz.TotalGrade == 0
+                ? 0
+                : (x.Score / x.Quiz.TotalGrade) * 100
+            )
+
             .ToListAsync();
     }
     public async Task<bool> HasSubmissionsAsync(int quizId)
